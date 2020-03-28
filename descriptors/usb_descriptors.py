@@ -5,12 +5,12 @@ class Descriptor:
         self._descriptor_type = data[1]
 
     @property
-    def length(self):
+    def bLength(self):
         '''The length of the descriptor'''
         return self._length
     
     @property
-    def descriptor_type (self):
+    def bDescriptorType (self):
         '''The type code of the descriptor'''
         return self._descriptor_type
 
@@ -22,98 +22,110 @@ class DeviceDescriptor(Descriptor):
         self._usb_version = data[2:4]
         self._device_class = data[4]
         self._device_sub_class = data[5]
-        self._max_packet_size = data[6]
-        self._vid = data[7:9]
-        self._pid = data[9:11]
-        self._device_release_code = data[11:13]
-        self._mid_str_index = data[13]
-        self._product_name_index = data[14]
-        self._serial_number = data[15]
-        self._num_configs = data[16]
+        self._device_protocol = data[6]
+        self._max_packet_size = data[7]
+        self._vid = data[8:10]
+        self._pid = data[10:12]
+        self._device_release_code = data[12:14]
+        self._mid_str_index = data[14]
+        self._product_name_index = data[15]
+        self._serial_number = data[16]
+        self._num_configs = data[17]
     
     @property
-    def usb_version(self):
+    def bcdUSB(self):
         '''USB Specification version'''
         self._usb_version
     
     @property
-    def device_class(self):
+    def bDeviceClass(self):
         '''Class ID of the device'''
         return self._device_class
     
     @property
-    def device_sub_class(self):
+    def bDeviceSubClass(self):
         '''Sub class ID of the device'''
         return self._device_sub_class
     
     @property
-    def max_packet_size(self):
+    def bDeviceProtocol(self):
+        '''Protocol for communication with this device'''
+        return self._device_protocol
+
+    @property
+    def bMaxPacketSize(self):
         '''Maximum packet size of the control interface'''
         return self._max_packet_size
     
     @property
-    def vendor_id(self):
+    def idVendor(self):
         '''Vendor ID of the device'''
         return self._vid
     
     @property
-    def product_id(self):
+    def idProduct (self):
         '''Product ID of the device'''
         return self._pid
     
     @property
-    def device_release_code(self):
+    def bcdDevice(self):
         '''Product version of the device (Manufacturer controlled)'''
         return self._device_release_code
     
     @property
-    def manufacturer_id_index(self):
+    def iManufacturer(self):
         '''Index of the manufacturer ID string descriptor'''
         return self._mid_str_index
     
     @property
-    def product_name_index(self):
+    def iProduct(self):
         '''Index of the product name string descriptor'''
         return self._product_name_index
     
     @property
-    def num_configs(self):
+    def bNumConfigurations(self):
         '''The number of configurations this device supports'''
         return self._num_configs
 
 class ConfigurationDescriptor(Descriptor):
-    '''Class describing USB configuration descriptor'''
+    '''Class representing USB configuration descriptor'''
 
     def __init__(self, data):
         super().__init__(data)
         self._total_descriptor_length = data[2:4]
         self._num_interfaces = data[4]
         self._config_index = data[5]
-        self._power_capability = data[6]
-        self._max_power = data[7]
+        self._configuration_descriptor_index = data[6]
+        self._power_capability = data[7]
+        self._max_power = data[8]
     
     @property
-    def total_descriptor_length(self):
+    def wTotalLength(self):
         '''Size of all descriptors in this configuration (bytes)'''
         return self._total_descriptor_length
     
     @property
-    def num_interfaces(self):
+    def bNumInterfaces(self):
         '''Number of interfaces in this configuration'''
         return self._num_interface
     
     @property
-    def config_index(self):
+    def bConfigurationValue(self):
         '''Index of this configuration'''
         return self._config_index
     
     @property
-    def power_capability(self):
+    def iConfiguration(self):
+        '''Index of string descriptor for this interface'''
+        return self._configuration_descriptor_index
+
+    @property
+    def bmAttributes(self):
         '''Describes the power capability of this configuration'''
         return self._power_capability
     
     @property
-    def max_power(self):
+    def bMaxPower(self):
         '''Amount of current drawn when bus-powered'''
         return self._max_power
 
@@ -131,42 +143,42 @@ class InterfaceDescriptor(Descriptor):
         self._interface_descriptor_index = data[8]
     
     @property
-    def interface_number(self):
+    def bInterfaceNumber(self):
         '''Index of interface in array of all interfaces supported by this configuration'''
         self._interface_number
     
     @property
-    def alternate_setting(self):
+    def bAlternateSetting(self):
         '''Value used to select an alternate setting for this interface'''
         return self._alternate_setting
     
     @property
-    def num_endpoints(self):
+    def bNumEndpoints(self):
         '''Number of endpoints associated with this interface'''
         return self._num_endpoints
     
     @property
-    def interface_class(self):
+    def bInterfaceClass(self):
         '''Class of interface'''
         return self._interface_class
     
     @property
-    def interface_sub_class(self):
+    def bInterfaceSubClass(self):
         '''Sub class of interface'''
         return self._interface_sub_class
     
     @property
-    def interface_protocol(self):
+    def bInterfaceProtocol(self):
         '''Protocol for communicating with interface'''
         return self._interface_protocol
     
     @property
-    def interface_descriptor_index(self):
+    def iInterface(self):
         '''Index of string descriptor for this interface'''
         return self._interface_descriptor_index
 
 class InterfaceAssociationDescriptor(Descriptor):
-    '''Class describing the interface association descriptor for a given configuration'''
+    '''Class representing the interface association descriptor for a given interface'''
 
     def __init__(self, data):
         super().__init__(data)
@@ -174,29 +186,35 @@ class InterfaceAssociationDescriptor(Descriptor):
         self._interface_count = data[3]
         self._function_class = data[4]
         self._function_sub_class = data[5]
+        self._function_protocol = data[6]
         self._function_descriptor_index = data[7]
     
     @property
-    def first_interface(self):
-        '''Control interface for the set of interfaces described by this association descriptor'''
+    def bFirstInterface(self):
+        '''Index of first interface in this interface association'''
         return self._first_interface
     
     @property
-    def interface_count(self):
-        '''Number of interfaces that are associated with this descriptor'''
+    def bInterfaceCount(self):
+        '''Number of interfaces in this interface association'''
         return self._interface_count
     
     @property
-    def function_class(self):
+    def bFunctionClass(self):
         '''Function class for this interface association'''
         return self._function_class
     
     @property
-    def function_sub_class(self):
+    def bFunctionSubClass(self):
         '''Function sub class for this interface association'''
         return self._function_sub_class
     
     @property
-    def function_descriptor_index(self):
+    def bFunctionProtocol(self):
+        '''Protocol version of interface association'''
+        return self._function_protocol
+
+    @property
+    def iFunction(self):
         '''Index for string descriptor for this interface association'''
         return self._function_descriptor_index
