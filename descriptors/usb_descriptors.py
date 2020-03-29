@@ -1,4 +1,6 @@
 '''This module contains classes representing standard USB descriptors'''
+
+
 class Descriptor:
     def __init__(self, data):
         self._length = data[0]
@@ -13,6 +15,7 @@ class Descriptor:
     def bDescriptorType (self):
         '''The type code of the descriptor'''
         return self._descriptor_type
+
 
 class DeviceDescriptor(Descriptor):
     '''Class representing USB device descriptors'''
@@ -87,6 +90,7 @@ class DeviceDescriptor(Descriptor):
         '''The number of configurations this device supports'''
         return self._num_configs
 
+
 class ConfigurationDescriptor(Descriptor):
     '''Class representing USB configuration descriptor'''
 
@@ -128,6 +132,7 @@ class ConfigurationDescriptor(Descriptor):
     def bMaxPower(self):
         '''Amount of current drawn when bus-powered'''
         return self._max_power
+
 
 class InterfaceDescriptor(Descriptor):
     '''Class representing the standard usb interface'''
@@ -177,6 +182,7 @@ class InterfaceDescriptor(Descriptor):
         '''Index of string descriptor for this interface'''
         return self._interface_descriptor_index
 
+
 class InterfaceAssociationDescriptor(Descriptor):
     '''Class representing the interface association descriptor for a given interface'''
 
@@ -218,3 +224,33 @@ class InterfaceAssociationDescriptor(Descriptor):
     def iFunction(self):
         '''Index for string descriptor for this interface association'''
         return self._function_descriptor_index
+
+
+class EndpointDescriptor(Descriptor):
+    '''Class representing endpoint descriptors'''
+
+    def __init__(self, data):
+        self._endpoint_address = data[2]
+        self._attributes = data[3]
+        self._packet_size = data[4:6]
+        self._interval = data[6]
+    
+    @property
+    def bEndpointAddress(self):
+        '''Address of the endpoint on the usb device'''
+        return self._endpoint_address
+    
+    @property
+    def bmAttributes(self):
+        '''Transfer type supported by this endpoint'''
+        return self._attributes
+    
+    @property
+    def wMaxPacketSize(self):
+        '''Maximum packet size this endpoint is capable of sending or receiving'''
+        return self._packet_size
+    
+    @property
+    def bInterval(self):
+        '''Interval for polling endpoint for data transfers'''
+        return self._interval
