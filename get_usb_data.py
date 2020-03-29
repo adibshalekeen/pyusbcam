@@ -1,5 +1,7 @@
 import usb
 import struct
+import pickle
+
 info_file = open('info.txt', 'w+')
 dev = usb.core.find(find_all=True, bDeviceClass=239)
 dev_list = list(dev)
@@ -28,8 +30,6 @@ info_file.close()
 
 desc = usb.control.get_descriptor(cam, 18, 0x02, 0)
 data = struct.unpack(f'<BBHBBBBHHHBBBB', desc)
-
-print (data)
 print(usb.control.get_status(cam))
 requestType = usb.util.build_request_type(
     usb.util.CTRL_IN,
@@ -41,7 +41,12 @@ desc_type = 0x02 << 8
 desc = cam.ctrl_transfer(requestType,
                          0x06,
                          wValue = desc_type,
-                         data_or_wLength = 5120,\
+                         data_or_wLength = data[2],\
                          wIndex=0)
+
+output_file = open(f'config_desc', 'wb')
+pickle.dump(desc, output_file)
+output_file.close()
+
 print(len(desc))
 print(desc)

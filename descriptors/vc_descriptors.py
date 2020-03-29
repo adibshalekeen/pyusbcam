@@ -164,7 +164,10 @@ class CameraTerminalDescriptor(InputTerminalDescriptor):
     
     def check_control_supported(self, control_id):
         '''Check if camera control is supported'''
-        return bool((self._controls >> control_id) & 0x01)
+        ctrl_int = 0
+        for byte_index in range(self._control_size):
+            ctrl_int |= (self._controls[byte_index] << (byte_index * 8))
+        return bool((ctrl_int >> control_id) & 0x01)
     
     @property
     def wObjectiveFocalLengthMin(self):
@@ -270,7 +273,10 @@ class ProcessingUnitDescriptor(VCUnitDescriptor):
     
     def check_control_supported(self, control_id):
         '''Check if control id is supported by processing unit'''
-        return bool((self._controls >> control_id) & 0x01)
+        ctrl_int = 0
+        for byte_index in range(self._control_size):
+            ctrl_int |= (self._controls[byte_index] << (byte_index * 8))
+        return bool((ctrl_int >> control_id) & 0x01)
 
     def check_analog_standard_supported(self, analog_standard_id):
         '''Check if analog standard is supported by processing unit'''
@@ -342,7 +348,10 @@ class EncodingUnitDescriptor(VCUnitDescriptor):
     
     def check_control_supported(self, control_id):
         '''Check if control is supported by this encoder unit'''
-        return bool((self._controls >> control_id) & 0x01)
+        ctrl_int = 0
+        for byte_index in range(self._control_size):
+            ctrl_int |= (self._controls[byte_index] << (byte_index * 8))
+        return bool((ctrl_int >> control_id) & 0x01)
     
     def check_control_runtime_supported(self, control_id):
         '''Check if control is supported during run time'''
@@ -395,6 +404,7 @@ class ExtensionUnitDescriptor(VCUnitDescriptor):
     @property
     def bNumControls(self):
         '''Number of controls supported by this extension unit'''
+        return self._num_controls
     
     @property
     def bNrInPins(self):
