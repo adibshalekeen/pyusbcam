@@ -1,5 +1,5 @@
 import enum
-from .usb_descriptors import Descriptor
+from usb_descriptors import Descriptor
 
 '''Module containing classes representing usb class-specific video control interface descriptors'''
 
@@ -25,7 +25,7 @@ class VideoControlEndpointDescriptor(VideoControlInterfaceDescriptor):
     
     @property
     def wMaxTransferSize(self):
-        '''The maximum packet size for this endpoint''''
+        '''The maximum packet size for this endpoint'''
         return self._max_transfer_size
 
 
@@ -91,7 +91,7 @@ class VCTerminalDescriptor(VideoControlInterfaceDescriptor):
         return self._output_terminal
 
 
-class InputTerminalDescriptor(VCTerminalDescriptor):
+class VCInputTerminalDescriptor(VCTerminalDescriptor):
     '''Class representing the the descriptor for a given input terminal to the device'''
 
     # Length of the descriptor with no optional fields in bytes
@@ -107,7 +107,7 @@ class InputTerminalDescriptor(VCTerminalDescriptor):
         return self._terminal_descriptor_index
 
 
-class OutputTerminalDescriptor(VCTerminalDescriptor):
+class VCOutputTerminalDescriptor(VCTerminalDescriptor):
     '''Class representing an output terminal descriptor'''
 
     # Length of the descriptor with no optional fields in bytes
@@ -129,7 +129,7 @@ class OutputTerminalDescriptor(VCTerminalDescriptor):
         return self._terminal_descriptor_index
 
 
-class CameraTerminalDescriptor(InputTerminalDescriptor):
+class CameraTerminalDescriptor(VCInputTerminalDescriptor):
     '''Class representing terminal descriptor for the camera'''
 
     class CameraControls(enum.IntEnum):
@@ -260,8 +260,8 @@ class ProcessingUnitDescriptor(VCUnitDescriptor):
         NTSC = 1
         PAL = 2
         SECAM = 3
-        NTSC = 4
-        PAL = 5
+        NTSC_2 = 4
+        PAL_2 = 5
 
     def __init__(self, data):
         self._source_id = data[4]
