@@ -267,9 +267,12 @@ class ProcessingUnitDescriptor(VCUnitDescriptor):
         self._source_id = data[4]
         self._max_multiplier = data[5:7]
         self._control_size = data[7]
-        self._controls = data[8:8 + int(self._control_size)]
+        self._controls = data[8:(8 + int(self._control_size))]
         self._processing_unit_descriptor_index = data[8 + int(self._control_size)]
-        self._video_standards = data[8 + int(self._control_size) + 1]
+        try:
+            self._video_standards = data[8 + int(self._control_size) + 1]
+        except IndexError:
+            self._video_standards = 0
     
     def check_control_supported(self, control_id):
         '''Check if control id is supported by processing unit'''
@@ -425,3 +428,14 @@ class ExtensionUnitDescriptor(VCUnitDescriptor):
     def bmControls(self):
         '''Bitmap representing the set of controls supported by the extension unit'''
         return self._controls
+
+def VCInterruptEndpointDescriptor(VideoControlInterfaceDescriptor):
+
+    def __init__(self, data):
+        super().__init__(data)
+        self._max_transfer_size = data[3:5]
+    
+    @property
+    def wMaxTransferSize(self):
+        '''Maximum interrupt structure size this endpoint is capable of sending'''
+        return self._max_transfer_size

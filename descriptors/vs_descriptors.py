@@ -40,8 +40,8 @@ class VSHeaderDescriptor(VideoStreamingInterfaceDescriptor):
         self._trigger_usage = data[11]
         self._control_size = data[12]
         self._controls = []
-        for format_index in range(len(self._num_formats)):
-            self._controls.append(data[13 + format_index * len(self._control_size) : 13 + (format_index + 1) * len(self._control_size)])
+        for format_index in range(self._num_formats):
+            self._controls.append(data[13 + format_index * self._control_size : 13 + (format_index + 1) * self._control_size])
 
     def check_control_supported(self, control_id, frame_format):
         '''Check if control is supported by this encoder unit'''
@@ -298,3 +298,26 @@ class VideoFrameDescriptor(VideoStreamingInterfaceDescriptor):
     def dwFrameInterval(self):
         '''Frame interval at a given frame interval index'''
         return self._frame_interval
+
+class VSColorMatchingDescriptor(VideoStreamingInterfaceDescriptor):
+
+    def __init__(self, data):
+        super().__init__(data)
+        self._color_primaries = data[3]
+        self._taransfer_characteristics = data[4]
+        self._matrix_coefficients = data[5]
+    
+    @property
+    def bColorPrimaries(self):
+        '''Defines the color primaries and the reference white'''
+        return self._color_primaries
+    
+    @property
+    def bTransferCharacteristics(self):
+        '''Defines the opto-electronic transfer characteristic of the source picture (gamma)'''
+        return self._taransfer_characteristics
+    
+    @property
+    def bMatrixCoefficients(self):
+        '''Matrix used to compute luma and chroma values from the color primaries'''
+        return self._matrix_coefficients

@@ -8,35 +8,52 @@ descriptor_bytes = pickle.load(open('config_desc', 'rb'))
 
 data_len = len(descriptor_bytes)
 
+class Placeholder:
+    curr_interface_type = None
+    def __init__(self):
+        pass
 
-def ClassSpecificInterfaceDescriptorParser(data):
-    
-    try:
-        return CLASS_SPCIFIC_DESCRIPTOR_CONSTRUCTORS[data[2]](data)
-    except KeyError:
-        return str(data)
-
-def ClassSpecificEndpointParser(data):
-    return "Class Specific Endpoint"
-
-CLASS_SPCIFIC_DESCRIPTOR_CONSTRUCTORS = {
+VC_DESCRIPTOR_CONSTRUCTORS = {
     VC_HEADER: VCInterfaceHeaderDescriptor,
     VC_INPUT_TERMINAL: VCInputTerminalDescriptor,
     VC_OUTPUT_TERMINAL: VCOutputTerminalDescriptor,
     VC_SELECTOR_UNIT: SelectorUnitDescriptor,
     VC_PROCESSING_UNIT: ProcessingUnitDescriptor,
     VC_EXTENSION_UNIT: ExtensionUnitDescriptor,
-    VC_ENCODING_UNIT: EncodingUnitDescriptor,
+    VC_ENCODING_UNIT: EncodingUnitDescriptor
+}
+
+VS_DESCRIPTOR_CONSTRUCTORS = {
     VS_INPUT_HEADER: VSHeaderDescriptor,
     VS_FORMAT_UNCOMPRESSED: UncompressedVideoFormatDescriptor,
-    VS_FORMAT_MJPEG: VS_FRAME_MJPEG,
+    VS_FORMAT_MJPEG: MJPEGVideoFormatDescriptor,
     VS_FRAME_UNCOMPRESSED: VideoFrameDescriptor,
     VS_FRAME_MJPEG: VideoFrameDescriptor,
+    VS_COLORFORMAT: VSColorMatchingDescriptor
 }
+
+TYPE_SPECIFIC_INTERFACE_PARSERS = {
+    SC_VIDEOCONTROL: VC_DESCRIPTOR_CONSTRUCTORS,
+    SC_VIDEOSTREAMING: VS_DESCRIPTOR_CONSTRUCTORS
+}
+
+def ClassSpecificInterfaceDescriptorParser(data):
+    try:
+        return TYPE_SPECIFIC_INTERFACE_PARSERS[Placeholder.curr_interface_type][data[2]](data)
+    except KeyError:
+        return str(data)
+
+def ClassSpecificEndpointParser(data):
+    return "Class Specific Endpoint"
+
+def InterfaceParser(data):
+    intf_descriptor = InterfaceDescriptor(data)
+    Placeholder.curr_interface_type = intf_descriptor.bInterfaceSubClass
+
 
 USB_ESCRIPTOR_CONSTRUCTORS = {
     DT_CONFIG: ConfigurationDescriptor,
-    DT_ID: InterfaceDescriptor,
+    DT_ID: InterfaceParser,
     DT_ED: EndpointDescriptor,
     DT_IAD: InterfaceAssociationDescriptor,
     DT_VC_IAD: InterfaceAssociationDescriptor,
@@ -53,5 +70,3 @@ while data_len > 0:
         print(USB_ESCRIPTOR_CONSTRUCTORS[descriptor[1]](descriptor))
     except KeyError:
         print("wtf")
-
-NEED TO LOOK AT STANDARD USB INTERFACE DESCRIPTOR TO SEE IF VC OR VS

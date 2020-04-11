@@ -26,6 +26,7 @@ DT_VC_IAD = 0x24
 # Video Control Interface Descriptors #
 #-------------------------------------#
 # Describes a collection of interfaces making up the video control interface
+# Interface subclass codes
 SC_UNDEFINED = 0x00
 SC_VIDEOCONTROL = 0x01
 SC_VIDEOSTREAMING = 0x02
