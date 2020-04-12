@@ -15,3 +15,4 @@ from .vs_descriptors import VSHeaderDescriptor
 from .vs_descriptors import UncompressedVideoFormatDescriptor
 from .vs_descriptors import MJPEGVideoFormatDescriptor
 from .vs_descriptors import VideoFrameDescriptor
+from .descriptor_parser import DescriptorParser

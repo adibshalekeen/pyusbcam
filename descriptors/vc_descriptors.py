@@ -1,5 +1,5 @@
 import enum
-from usb_descriptors import Descriptor
+from .usb_descriptors import Descriptor
 
 '''Module containing classes representing usb class-specific video control interface descriptors'''
 
@@ -429,7 +429,7 @@ class ExtensionUnitDescriptor(VCUnitDescriptor):
         '''Bitmap representing the set of controls supported by the extension unit'''
         return self._controls
 
-def VCInterruptEndpointDescriptor(VideoControlInterfaceDescriptor):
+class VCInterruptEndpointDescriptor(VideoControlInterfaceDescriptor):
 
     def __init__(self, data):
         super().__init__(data)

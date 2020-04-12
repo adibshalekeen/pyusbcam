@@ -1,6 +1,6 @@
 '''This module contains classes modeling descriptors for the video-streaming interface'''
 import enum
-from usb_descriptors import Descriptor
+from .usb_descriptors import Descriptor
 
 
 class VideoStreamingInterfaceDescriptor(Descriptor):
