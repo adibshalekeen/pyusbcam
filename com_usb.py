@@ -14,7 +14,7 @@ ep = eps[0]
 print(ep.__str__())
 control_intf = intfs[0]
 print(stream._get_full_descriptor_str())
-# cam.set_interface_altsetting(stream, stream.bAlternateSetting)
+cam.set_interface_altsetting(stream, stream.bAlternateSetting)
 prev = time.time()
 data = []
 while True:
